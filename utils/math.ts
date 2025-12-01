@@ -1,0 +1,1 @@
+export const modulo = (value: number, base: number) => ((value % base) + base) % base;
