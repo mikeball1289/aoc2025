@@ -1,4 +1,4 @@
-import { join } from "path";
+import { join } from "node:path";
 import { parse } from "../utils/parser";
 import { modulo } from "../utils/math";
 
