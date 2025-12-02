@@ -32,19 +32,16 @@ const initialState: LockState = {
   zeroes: 0,
 };
 
-const countZeroPasses = (startPosition: number, dialPosition: number) => {
-  const normalPosition = dialPosition <= 0 ? -dialPosition + (startPosition > 0 ? DIAL_SIZE : 0) : dialPosition;
-  
-  return Math.floor(normalPosition / DIAL_SIZE);
-}
-
 const spinDial = (lockState: LockState, move: Move): LockState => {
   const moveAmount = move.amount * (move.direction === "L" ? -1 : 1);
   const newDialPosition = lockState.dial + moveAmount;
+  const normalStart = moveAmount < 0 ? (DIAL_SIZE - lockState.dial) % 100 : lockState.dial;
+  const normalEnd = normalStart + Math.abs(moveAmount);
+  const zeroPasses = Math.floor(normalEnd / 100);
 
   return {
     dial: modulo(newDialPosition, DIAL_SIZE),
-    zeroes: lockState.zeroes + countZeroPasses(lockState.dial, newDialPosition),
+    zeroes: lockState.zeroes + zeroPasses,
   }
 };
 
