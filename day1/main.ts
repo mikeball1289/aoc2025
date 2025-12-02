@@ -32,19 +32,35 @@ const initialState: LockState = {
   zeroes: 0,
 };
 
-const spinDial = (lockState: LockState, move: Move): LockState => {
+const spinDialPart1 = (lockState: LockState, move: Move): LockState => {
   const moveAmount = move.amount * (move.direction === "L" ? -1 : 1);
-  const newDialPosition = lockState.dial + moveAmount;
+  const newDialPosition = modulo(lockState.dial + moveAmount, DIAL_SIZE);
+
+  return {
+    dial: newDialPosition,
+    zeroes: lockState.zeroes + (newDialPosition === 0 ? 1 : 0),
+  };
+};
+
+const answerPart1 = inputs.reduce(spinDialPart1, initialState);
+
+console.log(`Part 1: ${answerPart1.zeroes}`);
+
+// Part 2
+
+const spinDialPart2 = (lockState: LockState, move: Move): LockState => {
+  const moveAmount = move.amount * (move.direction === "L" ? -1 : 1);
+  const newDialPosition = modulo(lockState.dial + moveAmount, DIAL_SIZE);
   const normalStart = moveAmount < 0 ? (DIAL_SIZE - lockState.dial) % DIAL_SIZE : lockState.dial;
   const normalEnd = normalStart + Math.abs(moveAmount);
   const zeroPasses = Math.floor(normalEnd / DIAL_SIZE);
 
   return {
-    dial: modulo(newDialPosition, DIAL_SIZE),
+    dial: newDialPosition,
     zeroes: lockState.zeroes + zeroPasses,
   };
 };
 
-const answer = inputs.reduce(spinDial, initialState);
+const answerPart2 = inputs.reduce(spinDialPart2, initialState);
 
-console.log(answer.zeroes);
+console.log(`Part 2: ${answerPart2.zeroes}`);
