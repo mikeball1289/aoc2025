@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import { join } from "path";
 import { parse } from "../utils/parser";
 import { modulo } from "../utils/math";
 
@@ -11,14 +11,14 @@ interface Move {
 
 const parseInputString = (input: string): Move => {
   const match = input.match(/^(L|R)([0-9]+)$/);
-  
+
   if (!match) throw new Error(`Invalid input ${input}`);
 
   return {
     direction: match[1] as "L" | "R",
     amount: parseInt(match[2] ?? "0"),
-  }
-}
+  };
+};
 
 const inputs = parse(join(__dirname, "input1.txt"), parseInputString);
 
@@ -42,7 +42,7 @@ const spinDial = (lockState: LockState, move: Move): LockState => {
   return {
     dial: modulo(newDialPosition, DIAL_SIZE),
     zeroes: lockState.zeroes + zeroPasses,
-  }
+  };
 };
 
 const answer = inputs.reduce(spinDial, initialState);
