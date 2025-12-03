@@ -3,11 +3,9 @@ import { parse } from "../utils/parser";
 import { maxBy } from "../utils/arrays";
 import { sum } from "../utils/math";
 
-type PowerBank = number[];
-
 const input = parse(join(__dirname, "input1.txt"), (line) => line.split("").map((n) => parseInt(n)));
 
-const maximizeJoltage = (bank: PowerBank, digits: number): number => {
+const maximizeJoltage = (bank: number[], digits: number): number => {
   if (!bank.length || digits <= 0) return 0;
 
   const enumeratedJoltages = bank.slice(0, bank.length - digits + 1).map((el, i) => ({ index: i, joltage: el }));
