@@ -11,3 +11,5 @@ export const sumRange = (start: number, end: number) => {
   const delta = end - start;
   return start * delta + (delta * (delta - 1)) / 2;
 };
+
+export const sum = (a: number, b: number) => a + b;
