@@ -46,8 +46,6 @@ const answerPart1 = inputs.reduce(spinDialPart1, initialState);
 
 console.log(`Part 1: ${answerPart1.zeroes}`);
 
-// Part 2
-
 const spinDialPart2 = (lockState: LockState, move: Move): LockState => {
   const moveAmount = move.amount * (move.direction === "L" ? -1 : 1);
   const newDialPosition = modulo(lockState.dial + moveAmount, DIAL_SIZE);

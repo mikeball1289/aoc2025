@@ -35,6 +35,6 @@ const removeAllPossibleRolls = (layout: Grid<CellContents>): Grid<CellContents> 
 
 const finalState = removeAllPossibleRolls(layout);
 
-const numRemovedRolls = layout.findAll((cell, x, y) => cell === "@" && finalState.at(x, y) !== "@").length;
+const numRemovedRolls = layout.findAll((cell, x, y) => cell !== finalState.at(x, y)).length;
 
 console.log(`Part 2: ${numRemovedRolls}`);
