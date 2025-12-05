@@ -31,3 +31,24 @@ export const minBy = <T>(arr: T[], projection: (value: T, index: number, array: 
 
   return best[0];
 };
+
+/**
+ * Split an array into multiple arrays based on a set of given partition keys
+ * @param arr
+ * @param predicate
+ */
+export const partitionBy = <T, PartitionKey extends string, PredicateResult extends PartitionKey>(
+  arr: T[],
+  partitions: PartitionKey[],
+  predicate: (item: T, index: number, arr: T[]) => PredicateResult,
+): Record<PartitionKey, T[]> => {
+  const labels = arr.map((item, i, arr) => [item, predicate(item, i, arr)] as const);
+
+  return labels.reduce(
+    (map: Record<PartitionKey, T[]>, [item, label]) => {
+      map[label].push(item);
+      return map;
+    },
+    Object.fromEntries(partitions.map((name) => [name, []] as [string, T[]])) as Record<PartitionKey, T[]>,
+  );
+};
