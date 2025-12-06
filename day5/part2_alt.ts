@@ -19,54 +19,37 @@ const ranges =
     };
   }) ?? [];
 
-const starts = ranges.map((r) => ({ index: r.start, type: "start" as const }));
-const ends = ranges.map((r) => ({ index: r.end, type: "end" as const }));
+const rangesOverlap = (range1: Range, range2: Range) => {
+  return range1.start <= range2.end && range2.start <= range1.end;
+};
 
-const [first, ...marks] = [...starts, ...ends].sort((a, b) => a.index - b.index);
-if (!first || first.type !== "start") {
-  throw new Error("Ranges are out of order");
-}
+const combineRanges = (range1: Range, range2: Range) => {
+  return {
+    start: Math.min(range1.start, range2.start),
+    end: Math.max(range1.end, range2.end),
+  };
+};
 
 type CombineState = {
-  openCount: number;
-  openRangeStart: number;
-  ranges: Range[];
+  currentRange: Range;
+  completedRanges: Range[];
 };
 
-const initialState: CombineState = {
-  openCount: 1,
-  openRangeStart: first.index,
-  ranges: [],
-};
+const [first, ...rest] = ranges.sort((a, b) => a.start - b.start);
 
-const allCombinedRanges = marks.reduce((state: CombineState, next): CombineState => {
-  if (next.type === "start") {
-    if (state.openCount === 0) {
-      return {
-        ...state,
-        openCount: 1,
-        openRangeStart: next.index,
-      };
-    } else {
-      return {
-        ...state,
-        openCount: state.openCount + 1,
-      };
-    }
-  } else {
-    if (state.openCount === 1) {
-      return {
-        ...state,
-        openCount: 0,
-        ranges: [...state.ranges, { start: state.openRangeStart, end: next.index }],
-      };
-    } else {
-      return {
-        ...state,
-        openCount: state.openCount - 1,
-      };
-    }
-  }
-}, initialState);
+if (!first) throw new Error("No ranges");
 
-console.log(allCombinedRanges.ranges.map((r) => r.end - r.start + 1).reduce(sum, 0));
+const processedRanges = rest.reduce(
+  ({ currentRange, completedRanges }: CombineState, nextRange): CombineState => {
+    if (rangesOverlap(currentRange, nextRange)) {
+      return { currentRange: combineRanges(currentRange, nextRange), completedRanges };
+    } else {
+      return { currentRange: nextRange, completedRanges: [...completedRanges, currentRange] };
+    }
+  },
+  { currentRange: first, completedRanges: [] },
+);
+
+const allCombinedRanges = [...processedRanges.completedRanges, processedRanges.currentRange];
+
+console.log(allCombinedRanges.map((r) => r.end - r.start + 1).reduce(sum, 0));
