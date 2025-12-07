@@ -13,3 +13,4 @@ export const sumRange = (start: number, end: number) => {
 };
 
 export const sum = (a: number, b: number) => a + b;
+export const prod = (a: number, b: number) => a * b;

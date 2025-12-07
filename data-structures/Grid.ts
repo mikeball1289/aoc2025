@@ -29,7 +29,7 @@ export class Grid<T> {
     return this.cells.length;
   }
 
-  constructor(private cells: T[][]) {
+  constructor(public cells: T[][]) {
     const width = this.width;
     if (cells.some((row) => row.length !== width)) {
       throw new Error("Cells must be rectangular");
@@ -42,6 +42,14 @@ export class Grid<T> {
     }
 
     return this.cells[y]![x]!;
+  }
+
+  row(y: number): T[] {
+    if (y < 0 || y >= this.height) {
+      throw new RangeError(`Row ${y} is out of range of 0-${this.height}`);
+    }
+
+    return this.cells[y]!;
   }
 
   map<K>(mapping: (cell: T, x: number, y: number, grid: Grid<T>) => K): Grid<K> {
@@ -97,5 +105,13 @@ export class Grid<T> {
     return this.cells
       .map((row, y) => row.map((cell, x) => serialize(cell, x, y, this)).join(delimitCell))
       .join(delimitRow);
+  }
+
+  transpose(): Grid<T> {
+    const cells = new Array(this.width)
+      .fill(0)
+      .map((_, x) => new Array(this.height).fill(0).map((_, y) => this.at(x, y)));
+
+    return new Grid(cells);
   }
 }

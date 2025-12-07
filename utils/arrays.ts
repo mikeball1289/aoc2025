@@ -37,7 +37,7 @@ export const minBy = <T>(arr: T[], projection: (value: T, index: number, array: 
  * @param arr
  * @param predicate
  */
-export const partitionBy = <T, PartitionKey extends string, PredicateResult extends PartitionKey>(
+export const partitionBy = <T, PartitionKey extends string | number, PredicateResult extends PartitionKey>(
   arr: T[],
   partitions: PartitionKey[],
   predicate: (item: T, index: number, arr: T[]) => PredicateResult,
@@ -49,6 +49,10 @@ export const partitionBy = <T, PartitionKey extends string, PredicateResult exte
       map[label].push(item);
       return map;
     },
-    Object.fromEntries(partitions.map((name) => [name, []] as [string, T[]])) as Record<PartitionKey, T[]>,
+    Object.fromEntries(partitions.map((name) => [name, []] as [PartitionKey, T[]])) as Record<PartitionKey, T[]>,
   );
+};
+
+export const isElement = <const T>(el: unknown, arr: readonly T[]): el is T => {
+  return arr.includes(el as T);
 };
