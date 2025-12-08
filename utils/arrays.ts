@@ -56,3 +56,11 @@ export const partitionBy = <T, PartitionKey extends string | number, PredicateRe
 export const isElement = <const T>(el: unknown, arr: readonly T[]): el is T => {
   return arr.includes(el as T);
 };
+
+export const pairwise = <T>(arr: T[]) => {
+  return arr.flatMap((el1, i) => arr.slice(i + 1).map((el2) => [el1, el2] as const));
+};
+
+export const uniq = <T>(arr: T[]) => {
+  return arr.filter((el, i) => arr.indexOf(el) === i);
+};

@@ -63,6 +63,6 @@ console.log(`Part 1: ${result.findAll((cell) => cell === ACTIVE_SPLITTER).length
 console.log(
   `Part 2: ${result
     .row(result.height - 1)
-    .filter((v) => isBeam(v))
+    .filter(isBeam)
     .reduce(sum, 0)}`,
 );
