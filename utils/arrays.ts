@@ -1,3 +1,9 @@
+import { Tuple } from "../data-structures/types";
+
+export const hasElements = <T>(arr: T[]): arr is [T, ...T[]] => {
+  return arr.length > 0;
+};
+
 export const range = (start: number, end: number) => new Array(end - start).fill(0).map((_, i) => start + i);
 
 /**
@@ -7,9 +13,11 @@ export const range = (start: number, end: number) => new Array(end - start).fill
  * @returns The highest value element of the given array
  */
 export const maxBy = <T>(arr: T[], projection: (value: T, index: number, array: T[]) => number): T | undefined => {
-  const [first, ...rest] = arr.map((value, index, array) => [value, projection(value, index, array)] as const);
+  const scoredElements = arr.map((value, index, array) => [value, projection(value, index, array)] as const);
 
-  if (!first) return undefined;
+  if (!hasElements(scoredElements)) return undefined;
+
+  const [first, ...rest] = scoredElements;
 
   const best = rest.reduce((currBest, next) => (next[1] > currBest[1] ? next : currBest), first);
 
@@ -23,9 +31,11 @@ export const maxBy = <T>(arr: T[], projection: (value: T, index: number, array: 
  * @returns The lowest value element of the given array
  */
 export const minBy = <T>(arr: T[], projection: (value: T, index: number, array: T[]) => number): T | undefined => {
-  const [first, ...rest] = arr.map((value, index, array) => [value, projection(value, index, array)] as const);
+  const scoredElements = arr.map((value, index, array) => [value, projection(value, index, array)] as const);
 
-  if (!first) return undefined;
+  if (!hasElements(scoredElements)) return undefined;
+
+  const [first, ...rest] = scoredElements;
 
   const best = rest.reduce((currBest, next) => (next[1] < currBest[1] ? next : currBest), first);
 
@@ -58,9 +68,27 @@ export const isElement = <const T>(el: unknown, arr: readonly T[]): el is T => {
 };
 
 export const pairwise = <T>(arr: T[]) => {
-  return arr.flatMap((el1, i) => arr.slice(i + 1).map((el2) => [el1, el2] as const));
+  return arr.flatMap((el1, i) => arr.slice(i + 1).map((el2) => [el1, el2] as const satisfies T[]));
 };
 
 export const uniq = <T>(arr: T[]) => {
   return arr.filter((el, i) => arr.indexOf(el) === i);
+};
+
+export const combin = <T>(arr: T[]): T[][] => {
+  if (!hasElements(arr)) return [[]];
+
+  const [first, ...rest] = arr;
+
+  const nextCombinations = combin(rest);
+
+  return [...nextCombinations, ...nextCombinations.map((c) => [first, ...c])];
+};
+
+export const edges = <T>(arr: T[], cycle?: "CYCLE"): Tuple<T, 2>[] => {
+  if (arr.length < 2) return [];
+
+  const pairs = arr.map((el, i) => [el, arr[(i + 1) % arr.length]!] satisfies Tuple<T, 2>);
+
+  return cycle ? pairs : pairs.slice(0, -1);
 };
